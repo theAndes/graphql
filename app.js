@@ -6,10 +6,11 @@ const graphQlResolvers = require('./graphql/resovlers/index');
 //schema object destructuring
 
 //middle ware
+const isAuth = require('./middleware/is-auth');
 const graphqlHTTP = require('express-graphql');
 const app = express();
 app.use(bodyParser.json());
-
+app.use(isAuth);
 app.use(
   '/graphql',
   graphqlHTTP({
