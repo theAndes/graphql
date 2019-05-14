@@ -1,44 +1,44 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const graphqlHttp = require('express-graphql');
 const mongoose = require('mongoose');
-const graphQlSchema = require('./graphql/schema/index');
-const graphQlResolvers = require('./graphql/resovlers/index');
-//schema object destructuring
 
-//middle ware
+const graphQlSchema = require('./graphql/schema/index');
+const graphQlResolvers = require('./graphql/resolvers/index');
 const isAuth = require('./middleware/is-auth');
-const graphqlHTTP = require('express-graphql');
+
 const app = express();
+
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(isAuth);
+
 app.use(
   '/graphql',
-  graphqlHTTP({
-    //schemaProperty
+  graphqlHttp({
     schema: graphQlSchema,
-
-    //root value resolver
     rootValue: graphQlResolvers,
-
-    //web interface for dev
     graphiql: true
   })
 );
 
-//TODO:Connect to our database
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.MONGO_USER}:${
-      process.env.MONGO_PASSWORD
-    }@c0-vf1sr.mongodb.net/${process.env.MONGO_DB}?retryWrites=true
-    `,
-    { useNewUrlParser: true }
-  )
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost/LocalOpenHouse')
   .then(() => {
-    console.log('Listen on 3000');
+    console.log('You are listening on 8000');
 
-    app.listen(3000);
+    app.listen(8000);
   })
   .catch(err => {
-    console.log('Can not Connect: ', err);
+    console.log(err);
   });

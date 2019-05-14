@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+
+import './Auth.css';
 import AuthContext from '../context/auth-context';
 
 class AuthPage extends Component {
   state = {
     isLogin: true
   };
+
   static contextType = AuthContext;
 
   constructor(props) {
@@ -18,9 +21,7 @@ class AuthPage extends Component {
       return { isLogin: !prevState.isLogin };
     });
   };
-  // ##############################################################################################
-  //The graphQL query
-  // ##############################################################################################
+
   submitHandler = event => {
     event.preventDefault();
     const email = this.emailEl.current.value;
@@ -81,9 +82,7 @@ class AuthPage extends Component {
         console.log(err);
       });
   };
-  // ##############################################################################################
-  //The graphQL query
-  // ##############################################################################################
+
   render() {
     return (
       <form className="auth-form" onSubmit={this.submitHandler}>
